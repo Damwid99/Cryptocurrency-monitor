@@ -1,4 +1,6 @@
 import mysql.connector
+import requests
+
 
 # Konfiguracja połączenia z bazą danych
 db_config = {
@@ -31,11 +33,31 @@ def dodaj_dane(name, mail, crypto, currency):
             cursor.close()
             connection.close()
 
-# Pobierz dane od użytkownika
-name = input("Podaj name: ")
-mail = input("Podaj mail: ")
-crypto = input("Podaj crypto (oddzielone przecinkami): ")
-currency = input("Podaj walutę: ")
+try:
+    base_url="https://api.coingecko.com/api/v3/coins/list"
+    response = requests.get(base_url)
+    list_of_crypto=[]
+    if response.status_code==200:
+        data=response.json()
+        for cryptocurrency in data:
+            list_of_crypto.append(cryptocurrency["name"].lower())
+    print(list_of_crypto)
+    name = input("Podaj name: ")
+    mail = input("Podaj mail: ")
+    crypto=''
+    cryptos=''
+    while crypto != "koniec" and cryptos=='':
+        crypto = input("Podaj crypto (jesli chcesz zakonczyc napisz 'koniec'): ")
+        if crypto.lower() in list_of_crypto:
+            cryptos+=f" ,{crypto.lower()}"
+        else:
+            print("Niepoprawna waluta, sprobuj raz jeszcze")
+    currency = input("Podaj walutę w jakiej chcesz widziec kurs: ")
+
+except:
+    print("Wystapil blad przy pobieraniu bazy danych z kryptowalutami")
+
+
 
 # Wywołaj funkcję do dodawania danych
-dodaj_dane(name, mail, crypto, currency)
+#dodaj_dane(name, mail, crypto, currency)
