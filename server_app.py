@@ -1,17 +1,33 @@
 import requests
 import smtplib
 import mysql.connector
+import configparser
 from email.mime.text import MIMEText
 from forex_python.converter import CurrencyRates
 
 
-# Konfiguracja połączenia z bazą danych
+config = configparser.ConfigParser()
+config.read("./Ethereum-check/config.ini")
+
+
+db_host = config.get("database", "host")
+db_user = config.get("database", "user")
+db_password = config.get("database", "password")
+db_database = config.get("database", "database")
+db_port = config.get("database", "port")
+
+smtp_server = config.get("email", "smtp_server")
+smtp_port = config.get("email", "smtp_port")
+sender_email = config.get("email", "sender_email")
+sender_password = config.get("email", "sender_password")
+
+
 db_config = {
-    "host": "sql7.freesqldatabase.com",
-    "user": "sql7640486",
-    "password": "l2zDVEwXgI",
-    "database": "sql7640486",
-    "port": 3306
+    "host": db_host,
+    "user": db_user,
+    "password": db_password,
+    "database": db_database,
+    "port": db_port
 }
 
 
@@ -56,17 +72,17 @@ def get_clients_from_database():
 
 def send_messages(clients):
     try:
-        server = smtplib.SMTP('smtp.office365.com', 587)
+        server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
-        server.login('cryptocurrency_stock@outlook.com', 'B1TC01N&3th3r3um')
+        server.login(sender_email, sender_password)
 
         for client in clients:
             msg = MIMEText(client.message)
             msg['Subject'] = 'Cryptocurrency change'
-            msg['From'] = 'cryptocurrency_stock@outlook.com'
+            msg['From'] = sender_email
             msg['To'] = client.mail
 
-            server.sendmail('cryptocurrency_stock@outlook.com', [client.mail], msg.as_string())
+            server.sendmail(sender_email, [client.mail], msg.as_string())
     except Exception as e:
         print('Wystapil blad podczas wysylania wiadomosci')
     finally:
