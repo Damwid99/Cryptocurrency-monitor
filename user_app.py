@@ -1,14 +1,24 @@
 import mysql.connector
 import requests
+import configparser
 
 
-# Konfiguracja połączenia z bazą danych
+config = configparser.ConfigParser()
+config.read("./Ethereum-check/config.ini")
+
+db_host = config.get("database", "host")
+db_user = config.get("database", "user")
+db_password = config.get("database", "password")
+db_database = config.get("database", "database")
+db_port = config.get("database", "port")
+
+
 db_config = {
-    "host": "sql7.freesqldatabase.com",
-    "user": "sql7640486",
-    "password": "l2zDVEwXgI",
-    "database": "sql7640486",
-    "port": 3306
+    "host": db_host,
+    "user": db_user,
+    "password": db_password,
+    "database": db_database,
+    "port": db_port
 }
 
 # Funkcja do dodawania danych do bazy
