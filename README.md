@@ -1,4 +1,4 @@
-# Aplikacje do śledzenia Kryptowalut
+# Aplikacja do śledzenia Kryptowalut
 
 ## Opis
 
