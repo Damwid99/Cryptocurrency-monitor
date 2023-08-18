@@ -2,6 +2,9 @@ import mysql.connector
 import requests
 import configparser
 
+currency_list = ['EUR', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK', 'CHF', 'ISK', 'NOK', 'TRY', 'AUD', 
+                 'BRL', 'CAD', 'CNY', 'HKD', 'IDR', 'INR', 'KRW', 'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR']
+
 
 config = configparser.ConfigParser()
 config.read("./Ethereum-check/config.ini")
@@ -51,23 +54,23 @@ try:
         data=response.json()
         for cryptocurrency in data:
             list_of_crypto.append(cryptocurrency["name"].lower())
-    print(list_of_crypto)
     name = input("Podaj name: ")
     mail = input("Podaj mail: ")
     crypto=''
     cryptos=''
-    while crypto != "koniec" and cryptos=='':
+    while crypto != "koniec" or cryptos=='':
         crypto = input("Podaj crypto (jesli chcesz zakonczyc napisz 'koniec'): ")
         if crypto.lower() in list_of_crypto:
             cryptos+=f" ,{crypto.lower()}"
-        else:
+        elif crypto!="koniec":
             print("Niepoprawna waluta, sprobuj raz jeszcze")
-    currency = input("Podaj walutę w jakiej chcesz widziec kurs: ")
+        else:
+            pass
+    currency=''
+    while currency not in currency_list:
+        currency = input("Podaj kod waluty w jakiej chcesz widziec kurs: ").upper()
 
 except:
     print("Wystapil blad przy pobieraniu bazy danych z kryptowalutami")
 
-
-
-# Wywołaj funkcję do dodawania danych
-#dodaj_dane(name, mail, crypto, currency)
+dodaj_dane(name, mail, crypto, currency)
